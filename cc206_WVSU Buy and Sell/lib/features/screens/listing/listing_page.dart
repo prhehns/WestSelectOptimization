@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../listing.dart'; // Ensure this path is correct
+import 'package:cc206_west_select/features/screens/listing.dart'; // Ensure this path is correct
 
 class CreateListingPage extends StatelessWidget {
   CreateListingPage({super.key});
@@ -8,25 +8,25 @@ class CreateListingPage extends StatelessWidget {
     {
       "title": "Onitsuka Tiger",
       "price": "PHP 1,990",
-      "imageUrl": "https://via.placeholder.com/150/GreenShoes",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "Prince Alexander"
     },
     {
       "title": "Donut 20PCS",
       "price": "PHP 50",
-      "imageUrl": "https://via.placeholder.com/150/Donuts",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "Prince Alexander"
     },
     {
       "title": "Nike Air Max",
       "price": "PHP 5,499",
-      "imageUrl": "https://via.placeholder.com/150/NikeAir",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "John Doe"
     },
     {
       "title": "Adidas Ultraboost",
       "price": "PHP 6,000",
-      "imageUrl": "https://via.placeholder.com/150/Adidas",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "Jane Smith"
     },
   ];
@@ -51,10 +51,11 @@ class CreateListingPage extends StatelessWidget {
           itemBuilder: (context, index) {
             final product = products[index];
             return ListingCard(
-              title: product['title']!,
-              price: product['price']!,
-              imageUrl: product['imageUrl']!,
-              seller: product['seller']!,
+              title: product['title'] ?? 'Unknown Title',
+              price: product['price'] ?? 'Unknown Price',
+              imageUrl:
+                  product['imageUrl'] ?? 'https://via.placeholder.com/150',
+              seller: product['seller'] ?? 'Unknown Seller',
             );
           },
         ),

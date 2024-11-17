@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
-import 'features/log_in.dart';
+import 'package:cc206_west_select/features/log_in.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cc206_west_select/features/screens/listing.dart';
 
-import '../listing.dart';
-import '../navigation.dart';
-
-class HomePage extends StatelessWidget{
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
@@ -59,8 +57,8 @@ class HomePage extends StatelessWidget{
                     title: index % 2 == 0 ? "Onitsuka Tiger" : "Donut 20PCS",
                     price: index % 2 == 0 ? "PHP 1,990" : "PHP 50",
                     imageUrl: index % 2 == 0
-                        ? 'https://via.placeholder.com/150/GreenShoes'
-                        : 'https://via.placeholder.com/150/Donuts',
+                        ? 'https://via.placeholder.com/150'
+                        : 'https://via.placeholder.com/150',
                     seller: "Prince Alexander",
                   );
                 },
@@ -69,8 +67,6 @@ class HomePage extends StatelessWidget{
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(),
     );
   }
-
 }

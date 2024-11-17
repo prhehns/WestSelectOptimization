@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-
-import '../../../firebase/auth_service.dart';
-import '../../log_in.dart';
-import '../listing.dart';
-import '../navigation.dart';
-import 'edit_profile.dart';
+import 'package:cc206_west_select/firebase/auth_service.dart';
+import 'package:cc206_west_select/features/log_in.dart';
+import 'package:cc206_west_select/features/screens/listing.dart';
+import 'package:cc206_west_select/features/screens/profile/edit_profile.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -29,25 +27,25 @@ class _ProfilePageState extends State<ProfilePage> {
     {
       "title": "Onitsuka Tiger",
       "price": "PHP 1,990",
-      "imageUrl": "https://via.placeholder.com/150/GreenShoes",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "Prince Alexander",
     },
     {
       "title": "Donut 20PCS",
       "price": "PHP 50",
-      "imageUrl": "https://via.placeholder.com/150/Donuts",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "Prince Alexander",
     },
     {
       "title": "Nike Air Max",
       "price": "PHP 5,499",
-      "imageUrl": "https://via.placeholder.com/150/NikeAir",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "John Doe",
     },
     {
       "title": "Adidas Ultraboost",
       "price": "PHP 6,000",
-      "imageUrl": "https://via.placeholder.com/150/Adidas",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "Jane Smith",
     },
   ];
@@ -56,19 +54,19 @@ class _ProfilePageState extends State<ProfilePage> {
     {
       "title": "Pending Item 1",
       "price": "PHP 2,000",
-      "imageUrl": "https://via.placeholder.com/150/Item1",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "Pending Seller 1",
     },
     {
       "title": "Pending Item 2",
       "price": "PHP 1,500",
-      "imageUrl": "https://via.placeholder.com/150/Item2",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "Pending Seller 2",
     },
     {
       "title": "Pending Item 3",
       "price": "PHP 3,000",
-      "imageUrl": "https://via.placeholder.com/150/Item3",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "Pending Seller 3",
     },
   ];
@@ -77,19 +75,19 @@ class _ProfilePageState extends State<ProfilePage> {
     {
       "title": "Completed Item 1",
       "price": "PHP 2,500",
-      "imageUrl": "https://via.placeholder.com/150/Complete1",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "Completed Seller 1",
     },
     {
       "title": "Completed Item 2",
       "price": "PHP 3,200",
-      "imageUrl": "https://via.placeholder.com/150/Complete2",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "Completed Seller 2",
     },
     {
       "title": "Completed Item 3",
       "price": "PHP 4,000",
-      "imageUrl": "https://via.placeholder.com/150/Complete3",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "Completed Seller 3",
     },
   ];
@@ -213,9 +211,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       ),
-
-      // Bottom Navigation Bar
-      bottomNavigationBar: CustomBottomNavigationBar(),
     );
   }
 

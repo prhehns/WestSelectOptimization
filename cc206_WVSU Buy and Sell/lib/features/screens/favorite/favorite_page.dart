@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../listing.dart';
+import 'package:cc206_west_select/features/screens/listing.dart';
 
 class FavoritePage extends StatelessWidget {
   FavoritePage({super.key});
@@ -9,19 +9,19 @@ class FavoritePage extends StatelessWidget {
     {
       "title": "Onitsuka Tiger",
       "price": "PHP 1,990",
-      "imageUrl": "https://via.placeholder.com/150/GreenShoes",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "Prince Alexander",
     },
     {
       "title": "Donut 20PCS",
       "price": "PHP 50",
-      "imageUrl": "https://via.placeholder.com/150/Donuts",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "Prince Alexander",
     },
     {
       "title": "Adidas Ultraboost",
       "price": "PHP 6,000",
-      "imageUrl": "https://via.placeholder.com/150/Adidas",
+      "imageUrl": "https://via.placeholder.com/150",
       "seller": "Jane Smith",
     },
   ];
@@ -46,13 +46,15 @@ class FavoritePage extends StatelessWidget {
           ),
           itemCount: favoriteItems.length,
           itemBuilder: (context, index) {
-            final item = favoriteItems[index];
+            final product = favoriteItems[index];
             return ListingCard(
-              title: item['title']!,
-              price: item['price']!,
-              imageUrl: item['imageUrl']!,
-              seller: item['seller']!,
+              title: product['title'] ?? 'Unknown Title',
+              price: product['price'] ?? 'Unknown Price',
+              imageUrl:
+              product['imageUrl'] ?? 'https://via.placeholder.com/150',
+              seller: product['seller'] ?? 'Unknown Seller',
             );
+
           },
         ),
       )

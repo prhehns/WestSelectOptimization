@@ -1,7 +1,6 @@
+import 'package:cc206_west_select/features/screens/main_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../features/screens/home/home_page.dart';
 import '../firebase/auth_service.dart';
 import 'sign_up.dart';
 
@@ -80,7 +79,7 @@ class _LogInPageState extends State<LogInPage> {
         // Successfully logged in with email and password
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => const MainPage()),
         );
       } else {
         setState(() {
@@ -134,7 +133,7 @@ class _LogInPageState extends State<LogInPage> {
         Navigator.pushReplacement(
           context,
 
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => const MainPage()),
         );
       } else {
         setState(() {
