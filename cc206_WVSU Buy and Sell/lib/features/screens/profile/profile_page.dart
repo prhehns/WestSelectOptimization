@@ -3,9 +3,12 @@ import 'package:cc206_west_select/firebase/auth_service.dart';
 import 'package:cc206_west_select/features/log_in.dart';
 import 'package:cc206_west_select/features/screens/listing.dart';
 import 'package:cc206_west_select/features/screens/profile/edit_profile.dart';
+import 'package:cc206_west_select/firebase/app_user.dart'; // Assuming your AppUser class is here
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final AppUser appUser;
+
+  const ProfilePage({super.key, required this.appUser});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -119,7 +122,9 @@ class _ProfilePageState extends State<ProfilePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const EditProfilePage()),
+                MaterialPageRoute(
+                  builder: (context) => EditProfilePage(user: widget.appUser),
+                ),
               );
             },
           ),
@@ -131,16 +136,19 @@ class _ProfilePageState extends State<ProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Profile Picture
-            const CircleAvatar(
+            CircleAvatar(
               radius: 40,
+              backgroundImage: widget.appUser.profilePictureUrl != null
+                  ? NetworkImage(widget.appUser.profilePictureUrl!) as ImageProvider
+                  : null,
               backgroundColor: Colors.grey,
             ),
             const SizedBox(height: 10),
 
             // User's Name
-            const Text(
-              "User's name",
-              style: TextStyle(
+            Text(
+              widget.appUser.displayName ?? "User's Name",
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -149,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
             // Introduction
             const SizedBox(height: 5),
             Text(
-              'Introduction about self',
+              widget.appUser.uid,
               style: TextStyle(
                 color: Colors.grey[600],
               ),

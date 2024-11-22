@@ -1,7 +1,8 @@
+import 'package:cc206_west_select/firebase/app_user.dart';
 import 'package:flutter/material.dart';
 
 class EditProfilePage extends StatelessWidget {
-  const EditProfilePage({super.key});
+  const EditProfilePage({super.key, required AppUser user});
 
   @override
   Widget build(BuildContext context) {
