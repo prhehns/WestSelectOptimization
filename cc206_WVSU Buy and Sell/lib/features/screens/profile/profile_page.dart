@@ -18,7 +18,8 @@ class _ProfilePageState extends State<ProfilePage> {
   int selectedTabIndex = 0; // To manage the active tab
 
   Future<void> _signOut() async {
-    await AuthService().signOut(); // Assuming AuthService has a signOut() method
+    await AuthService()
+        .signOut(); // Assuming AuthService has a signOut() method
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LogInPage()),
@@ -139,7 +140,8 @@ class _ProfilePageState extends State<ProfilePage> {
             CircleAvatar(
               radius: 40,
               backgroundImage: widget.appUser.profilePictureUrl != null
-                  ? NetworkImage(widget.appUser.profilePictureUrl!) as ImageProvider
+                  ? NetworkImage(widget.appUser.profilePictureUrl!)
+                      as ImageProvider
                   : null,
               backgroundColor: Colors.grey,
             ),
@@ -186,12 +188,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 itemBuilder: (context, index) {
                   final item = getCurrentTabData()[index];
-                  return ListingCard(
-                    title: item['title']!,
-                    price: item['price']!,
-                    imageUrl: item['imageUrl']!,
-                    seller: item['seller']!,
-                  );
                 },
               ),
             ),
@@ -202,7 +198,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: _signOut,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),

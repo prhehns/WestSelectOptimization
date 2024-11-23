@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cc206_west_select/features/screens/listing.dart';
 
 class CreateListingPage extends StatefulWidget {
   const CreateListingPage({super.key});
@@ -8,33 +11,8 @@ class CreateListingPage extends StatefulWidget {
 }
 
 class _CreateListingPageState extends State<CreateListingPage> {
-  bool isPreOrder = false;
-  int stock = 10;
-  int deliveryDays = 10;
-  int _currentIndex = 2;
-
-  void navigateToMessaging(BuildContext context) {
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            CreateListingPage(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset.zero;
-          const curve = Curves.ease;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          var offsetAnimation = animation.drive(tween);
-
-          return SlideTransition(
-            position: offsetAnimation,
-            child: child,
-          );
-        },
-      ),
-    );
-  }
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +21,14 @@ class _CreateListingPageState extends State<CreateListingPage> {
         title: Text("Create Listing"),
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: createListing,
             child: Text("Publish", style: TextStyle(color: Colors.blue)),
           ),
         ],
         leading: TextButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context); // Go back to previous page
+          },
           child: Text("Cancel", style: TextStyle(color: Colors.red)),
         ),
       ),
@@ -57,93 +37,14 @@ class _CreateListingPageState extends State<CreateListingPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Media Section
-            Container(
-              height: 150,
-              color: Colors.grey[200],
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.image, size: 40, color: Colors.grey),
-                    Text("Add images\nMust add at least 3",
-                        textAlign: TextAlign.center),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-
             // Product Details
-            TextField(decoration: InputDecoration(labelText: "Product Title")),
             TextField(
-                decoration: InputDecoration(labelText: "Add description")),
-            TextField(decoration: InputDecoration(labelText: "Price")),
-            TextField(decoration: InputDecoration(labelText: "Address")),
-
-            SizedBox(height: 20),
-
-            // Styles Section
-            ExpansionTile(
-              title: Text("Styles"),
-              children: [
-                ListTile(
-                  leading: Icon(Icons.color_lens),
-                  title: Text("Color"),
-                  trailing: Icon(Icons.arrow_forward_ios),
-                ),
-                ListTile(
-                  leading: Icon(Icons.format_size),
-                  title: Text("Size"),
-                  trailing: Icon(Icons.arrow_forward_ios),
-                ),
-                ListTile(
-                  leading: Icon(Icons.info_outline),
-                  title: Text("Condition"),
-                  trailing: Icon(Icons.arrow_forward_ios),
-                ),
-              ],
+              controller: _titleController,
+              decoration: InputDecoration(labelText: "Product Title"),
             ),
-
-            SizedBox(height: 20),
-
-            // Inventory Section
-            ExpansionTile(
-              title: Text("Inventory"),
-              children: [
-                ListTile(
-                  leading: Icon(Icons.inventory),
-                  title: Row(
-                    children: [
-                      Text("Stock"),
-                      Spacer(),
-                      Text(stock.toString()),
-                    ],
-                  ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.shopping_cart),
-                  title: Text("Pre-order"),
-                  trailing: Switch(
-                    value: isPreOrder,
-                    onChanged: (value) {
-                      setState(() {
-                        isPreOrder = value;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.access_time),
-                  title: Row(
-                    children: [
-                      Text("Days to deliver"),
-                      Spacer(),
-                      Text("$deliveryDays days"),
-                    ],
-                  ),
-                ),
-              ],
+            TextField(
+              controller: _descriptionController,
+              decoration: InputDecoration(labelText: "Add description"),
             ),
           ],
         ),
@@ -151,17 +52,48 @@ class _CreateListingPageState extends State<CreateListingPage> {
     );
   }
 
-  Widget _buildCategoryItem(String label, IconData icon) {
-    return Column(
-      children: [
-        CircleAvatar(
-          backgroundColor: Colors.grey[200],
-          radius: 30,
-          child: Icon(icon, color: Colors.black),
-        ),
-        const SizedBox(height: 4),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ],
-    );
+  // Create listing method
+  Future<void> createListing() async {
+    try {
+      // Get the current user from FirebaseAuth
+      User? currentUser = FirebaseAuth.instance.currentUser;
+
+      if (currentUser == null) {
+        // Handle case where the user is not logged in
+        print("No user is logged in.");
+        return;
+      }
+
+      // Get the current user's UID
+      String userId = currentUser.uid;
+
+      // Validate inputs
+      if (_titleController.text.isEmpty ||
+          _descriptionController.text.isEmpty) {
+        // Show an error if any required field is empty
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Please fill all fields")),
+        );
+        return;
+      }
+
+      // Create a Listing object
+      final listing = Listing(
+        postTitle: _titleController.text,
+        postDescription: _descriptionController.text,
+        numComments: 0, // Default number of comments
+        postUserId: userId,
+      );
+
+      // Add listing to Firestore
+      await FirebaseFirestore.instance
+          .collection('post')
+          .add(listing.toFirestore());
+
+      // Go back to the previous page (home page)
+      Navigator.pop(context);
+    } catch (e) {
+      print("Error creating listing: $e");
+    }
   }
 }
