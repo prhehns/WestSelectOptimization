@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Listing {
   final String postTitle;
   final String postDescription;
@@ -17,7 +19,10 @@ class Listing {
       postTitle: doc['post_title'] ?? '',
       postDescription: doc['post_description'] ?? '',
       numComments: doc['num_comments'] ?? 0,
-      postUserId: doc['post_users'] ?? '',
+      postUserId: doc['post_users'] is DocumentReference
+          ? (doc['post_users'] as DocumentReference)
+              .id // Get document ID if it's a reference
+          : (doc['post_users'] ?? ''), // Otherwise, use the value as a string
     );
   }
 
