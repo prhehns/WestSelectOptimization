@@ -1,4 +1,5 @@
 import 'package:cc206_west_select/features/screens/main_page.dart';
+import 'package:cc206_west_select/features/screens/profile/profile_page.dart';
 import 'package:cc206_west_select/features/set_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -87,14 +88,8 @@ class _LogInPageState extends State<LogInPage> {
             displayName: user.displayName ?? '',
             profilePictureUrl: user.photoURL ?? '',
           );
-
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SetupProfilePage(user: customUser)),
-          );
         } else {
-           // Get this from FirebaseAuth.currentUser.uid
+          // Get this from FirebaseAuth.currentUser.uid
           final appUser = await UserRepo().getUser(user.uid);
 
           if (appUser != null) {
@@ -109,7 +104,6 @@ class _LogInPageState extends State<LogInPage> {
               _errorMessage = 'User data is missing. Please try again.';
             });
           }
-
         }
       } else {
         setState(() {
@@ -190,7 +184,6 @@ class _LogInPageState extends State<LogInPage> {
               _errorMessage = 'User data is missing. Please try again.';
             });
           }
-
         }
       } else {
         setState(() {

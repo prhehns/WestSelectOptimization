@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cc206_west_select/features/screens/listing.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -29,7 +28,6 @@ class _CreateListingPageState extends State<CreateListingPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Sell a Product Button
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
@@ -48,19 +46,16 @@ class _CreateListingPageState extends State<CreateListingPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Product Title Input
                     TextField(
                       controller: _titleController,
                       decoration:
                           const InputDecoration(labelText: "Product Title"),
                     ),
-                    // Product Description Input
                     TextField(
                       controller: _descriptionController,
                       decoration:
                           const InputDecoration(labelText: "Add Description"),
                     ),
-                    // Price Input
                     TextField(
                       controller: _priceController,
                       keyboardType: TextInputType.number,
@@ -68,7 +63,6 @@ class _CreateListingPageState extends State<CreateListingPage> {
                           const InputDecoration(labelText: "Price (PHP)"),
                     ),
                     const SizedBox(height: 16),
-                    // Image Upload Button
                     ElevatedButton.icon(
                       onPressed: uploadImage,
                       icon: const Icon(Icons.image),
@@ -84,7 +78,6 @@ class _CreateListingPageState extends State<CreateListingPage> {
                         ),
                       ),
                     const SizedBox(height: 16),
-                    // Publish Button
                     ElevatedButton(
                       onPressed: createListing,
                       child: const Text("Publish Listing"),
@@ -153,7 +146,6 @@ class _CreateListingPageState extends State<CreateListingPage> {
   }
 
   Future<void> uploadImage() async {
-    // Image upload logic remains the same
     try {
       final picker = ImagePicker();
       final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -211,6 +203,9 @@ class _CreateListingPageState extends State<CreateListingPage> {
 
       String userId = currentUser.uid;
 
+      // Fetch user's displayName
+      String userDisplayName = currentUser.displayName ?? 'Unknown Seller';
+
       if (_titleController.text.isEmpty ||
           _descriptionController.text.isEmpty ||
           _priceController.text.isEmpty) {
@@ -230,6 +225,8 @@ class _CreateListingPageState extends State<CreateListingPage> {
         'postUserId': userId,
         'numComments': 0,
         'createdAt': FieldValue.serverTimestamp(),
+        'sellerName':
+            userDisplayName, //ari indi mag gwa sa homepage from other user
       };
 
       await FirebaseFirestore.instance.collection('post').add(listingData);

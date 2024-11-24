@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cc206_west_select/firebase/auth_service.dart';
 import 'package:cc206_west_select/features/log_in.dart';
-import 'package:cc206_west_select/features/screens/listing.dart';
-import 'package:cc206_west_select/features/screens/profile/edit_profile.dart';
-import 'package:cc206_west_select/firebase/app_user.dart'; // Assuming your AppUser class is here
+import 'package:cc206_west_select/firebase/app_user.dart';
+import 'package:cc206_west_select/firebase/user_repo.dart';
 
 class ProfilePage extends StatefulWidget {
   final AppUser appUser;
@@ -15,99 +14,71 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  int selectedTabIndex = 0; // To manage the active tab
+  int selectedTabIndex = 0;
 
   Future<void> _signOut() async {
-    await AuthService()
-        .signOut(); // Assuming AuthService has a signOut() method
+    await AuthService().signOut();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LogInPage()),
-    ); // Redirect to LoginPage after sign-out
+    );
   }
 
-  // Mock data for each tab
-  final List<Map<String, String>> listings = [
-    {
-      "title": "Onitsuka Tiger",
-      "price": "PHP 1,990",
-      "imageUrl": "https://via.placeholder.com/150",
-      "seller": "Prince Alexander",
-    },
-    {
-      "title": "Donut 20PCS",
-      "price": "PHP 50",
-      "imageUrl": "https://via.placeholder.com/150",
-      "seller": "Prince Alexander",
-    },
-    {
-      "title": "Nike Air Max",
-      "price": "PHP 5,499",
-      "imageUrl": "https://via.placeholder.com/150",
-      "seller": "John Doe",
-    },
-    {
-      "title": "Adidas Ultraboost",
-      "price": "PHP 6,000",
-      "imageUrl": "https://via.placeholder.com/150",
-      "seller": "Jane Smith",
-    },
-  ];
+  Future<void> _editDisplayName() async {
+    final TextEditingController editNameController =
+        TextEditingController(text: widget.appUser.displayName ?? '');
 
-  final List<Map<String, String>> pending = [
-    {
-      "title": "Pending Item 1",
-      "price": "PHP 2,000",
-      "imageUrl": "https://via.placeholder.com/150",
-      "seller": "Pending Seller 1",
-    },
-    {
-      "title": "Pending Item 2",
-      "price": "PHP 1,500",
-      "imageUrl": "https://via.placeholder.com/150",
-      "seller": "Pending Seller 2",
-    },
-    {
-      "title": "Pending Item 3",
-      "price": "PHP 3,000",
-      "imageUrl": "https://via.placeholder.com/150",
-      "seller": "Pending Seller 3",
-    },
-  ];
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Edit Display Name'),
+          content: TextField(
+            controller: editNameController,
+            decoration: const InputDecoration(labelText: 'Display Name'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final newName = editNameController.text.trim();
+                if (newName.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Display name cannot be empty'),
+                    ),
+                  );
+                  return;
+                }
 
-  final List<Map<String, String>> completed = [
-    {
-      "title": "Completed Item 1",
-      "price": "PHP 2,500",
-      "imageUrl": "https://via.placeholder.com/150",
-      "seller": "Completed Seller 1",
-    },
-    {
-      "title": "Completed Item 2",
-      "price": "PHP 3,200",
-      "imageUrl": "https://via.placeholder.com/150",
-      "seller": "Completed Seller 2",
-    },
-    {
-      "title": "Completed Item 3",
-      "price": "PHP 4,000",
-      "imageUrl": "https://via.placeholder.com/150",
-      "seller": "Completed Seller 3",
-    },
-  ];
+                final updatedUser = AppUser(
+                  uid: widget.appUser.uid,
+                  email: widget.appUser.email,
+                  displayName: newName,
+                  profilePictureUrl: widget.appUser.profilePictureUrl,
+                );
 
-  // Returns the appropriate list based on the selected tab
-  List<Map<String, String>> getCurrentTabData() {
-    switch (selectedTabIndex) {
-      case 0:
-        return listings;
-      case 1:
-        return pending;
-      case 2:
-        return completed;
-      default:
-        return [];
-    }
+                await UserRepo().addUser(updatedUser);
+
+                setState(() {
+                  widget.appUser.displayName = newName;
+                });
+
+                Navigator.pop(context);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Name updated successfully')),
+                );
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -117,17 +88,14 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        title: const Text(
+          "Profile",
+          style: TextStyle(color: Colors.black),
+        ),
         actions: [
           IconButton(
-            icon: Icon(Icons.settings, color: Colors.grey),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditProfilePage(user: widget.appUser),
-                ),
-              );
-            },
+            icon: const Icon(Icons.settings, color: Colors.grey),
+            onPressed: () {},
           ),
         ],
       ),
@@ -136,37 +104,39 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Profile Picture
-            CircleAvatar(
-              radius: 40,
-              backgroundImage: widget.appUser.profilePictureUrl != null
-                  ? NetworkImage(widget.appUser.profilePictureUrl!)
-                      as ImageProvider
-                  : null,
-              backgroundColor: Colors.grey,
-            ),
-            const SizedBox(height: 10),
-
-            // User's Name
-            Text(
-              widget.appUser.displayName ?? "User's Name",
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            // Introduction
-            const SizedBox(height: 5),
-            Text(
-              widget.appUser.uid,
-              style: TextStyle(
-                color: Colors.grey[600],
-              ),
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundImage: widget.appUser.profilePictureUrl != null
+                      ? NetworkImage(widget.appUser.profilePictureUrl!)
+                          as ImageProvider
+                      : null,
+                  backgroundColor: Colors.grey,
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.appUser.displayName ?? "User's Name",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: _editDisplayName,
+                        child: const Text('Edit Name'),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
 
-            // Tab Section
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -177,7 +147,6 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 20),
 
-            // Content Section (Listing, Pending, Completed)
             Expanded(
               child: GridView.builder(
                 itemCount: getCurrentTabData().length,
@@ -188,28 +157,37 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 itemBuilder: (context, index) {
                   final item = getCurrentTabData()[index];
+                  return Card(
+                    child: Column(
+                      children: [
+                        Image.network(item['imageUrl']!, fit: BoxFit.cover),
+                        const SizedBox(height: 5),
+                        Text(item['title']!),
+                        Text(item['price']!),
+                        Text('Seller: ${item['seller']}'),
+                      ],
+                    ),
+                  );
                 },
               ),
             ),
 
-            // Sign Out Button
-            Center(
-              child: ElevatedButton(
-                onPressed: _signOut,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+            // Sign Out
+            ElevatedButton(
+              onPressed: _signOut,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'Sign Out',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+              ),
+              child: const Text(
+                'Sign Out',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -245,5 +223,18 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
     );
+  }
+
+  List<Map<String, String>> getCurrentTabData() {
+    switch (selectedTabIndex) {
+      case 0:
+        return [];
+      case 1:
+        return [];
+      case 2:
+        return [];
+      default:
+        return [];
+    }
   }
 }

@@ -107,6 +107,7 @@ class HomePage extends StatelessWidget {
                                 );
                               } else {
                                 // Handle the case where the seller data doesn't exist
+
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
