@@ -5,12 +5,16 @@ class Listing {
   final String postDescription;
   final int numComments;
   final String postUserId;
+  final String imageUrl; // New field for image URL
+  final double price; // New field for price
 
   Listing({
     required this.postTitle,
     required this.postDescription,
     required this.numComments,
     required this.postUserId,
+    required this.imageUrl,
+    required this.price,
   });
 
   // Convert Firestore document to Listing
@@ -20,9 +24,10 @@ class Listing {
       postDescription: doc['post_description'] ?? '',
       numComments: doc['num_comments'] ?? 0,
       postUserId: doc['post_users'] is DocumentReference
-          ? (doc['post_users'] as DocumentReference)
-              .id // Get document ID if it's a reference
-          : (doc['post_users'] ?? ''), // Otherwise, use the value as a string
+          ? (doc['post_users'] as DocumentReference).id
+          : (doc['post_users'] ?? ''),
+      imageUrl: doc['image_url'] ?? '',
+      price: (doc['price'] ?? 0).toDouble(),
     );
   }
 
@@ -33,6 +38,8 @@ class Listing {
       'post_description': postDescription,
       'num_comments': numComments,
       'post_users': postUserId,
+      'image_url': imageUrl,
+      'price': price,
     };
   }
 }
